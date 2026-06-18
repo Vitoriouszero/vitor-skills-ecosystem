@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reorganização de Skills — Vitor</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f1117; color: #e2e8f0; padding: 32px 24px; }
+  h1 { font-size: 22px; font-weight: 700; color: #f8fafc; margin-bottom: 6px; }
+  .subtitle { font-size: 13px; color: #64748b; margin-bottom: 36px; }
+
+  /* LEGEND */
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #94a3b8; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+  .dot-fusao { background: #6366f1; }
+  .dot-absorver { background: #0ea5e9; }
+  .dot-nova { background: #10b981; }
+  .dot-manter { background: #f59e0b; }
+  .dot-descartar { background: #ef4444; }
+  .dot-claude-code { background: #a855f7; }
+
+  /* SECTION TITLES */
+  .section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; margin: 32px 0 12px; padding-bottom: 8px; border-bottom: 1px solid #1e293b; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 13px; }
+  th { background: #1e293b; color: #94a3b8; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; padding: 10px 12px; text-align: left; }
+  td { padding: 11px 12px; vertical-align: top; border-bottom: 1px solid #1e293b; line-height: 1.5; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #13192a; }
+
+  /* ROW TYPE COLORS */
+  .row-fusao td:first-child { border-left: 3px solid #6366f1; }
+  .row-absorver td:first-child { border-left: 3px solid #0ea5e9; }
+  .row-nova td:first-child { border-left: 3px solid #10b981; }
+  .row-manter td:first-child { border-left: 3px solid #f59e0b; }
+  .row-descartar td:first-child { border-left: 3px solid #ef4444; }
+  .row-claude-code td:first-child { border-left: 3px solid #a855f7; }
+
+  /* TAGS */
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .tag-fusao { background: #312e81; color: #a5b4fc; }
+  .tag-absorver { background: #0c4a6e; color: #7dd3fc; }
+  .tag-nova { background: #064e3b; color: #6ee7b7; }
+  .tag-manter { background: #451a03; color: #fcd34d; }
+  .tag-descartar { background: #450a0a; color: #fca5a5; }
+  .tag-claude-code { background: #2e1065; color: #d8b4fe; }
+
+  .skill-name { font-weight: 700; font-size: 13px; font-family: 'Courier New', monospace; }
+  .skill-from { font-size: 11px; color: #64748b; margin-top: 3px; }
+  .pill { display: inline-block; background: #1e293b; border-radius: 4px; padding: 1px 7px; font-family: monospace; font-size: 11px; color: #94a3b8; margin: 1px; white-space: nowrap; }
+  .pill-new { background: #1a2e1a; color: #6ee7b7; }
+  a.repo-link { color: #60a5fa; text-decoration: none; font-size: 11px; display: inline-block; margin-top: 3px; }
+  a.repo-link:hover { text-decoration: underline; }
+  a.pill-link { display: inline-block; background: #1a2e1a; color: #6ee7b7; border-radius: 4px; padding: 1px 7px; font-family: monospace; font-size: 11px; margin: 1px; white-space: nowrap; text-decoration: none; }
+  a.pill-link:hover { background: #22402a; }
+  a.pill-link-gray { display: inline-block; background: #1e293b; color: #94a3b8; border-radius: 4px; padding: 1px 7px; font-family: monospace; font-size: 11px; margin: 1px; white-space: nowrap; text-decoration: none; }
+  a.pill-link-gray:hover { background: #263248; }
+
+  .priority-imediato { color: #ef4444; font-weight: 700; }
+  .priority-curto { color: #f59e0b; font-weight: 600; }
+  .priority-longo { color: #64748b; }
+
+  .quality-high { color: #10b981; }
+  .quality-med { color: #f59e0b; }
+  .quality-low { color: #ef4444; }
+
+  .note { background: #1e293b; border-left: 3px solid #374151; padding: 10px 14px; border-radius: 4px; font-size: 12px; color: #94a3b8; margin-top: 24px; line-height: 1.6; }
+  .note strong { color: #e2e8f0; }
+
+  .arrow { color: #6366f1; font-weight: bold; margin: 0 4px; }
+
+  /* QUALITY ASSESSMENT TABLE */
+  .qa-table td { font-size: 12px; }
+  .verdict-manter { color: #f59e0b; font-weight: 600; }
+  .verdict-upgrade { color: #6366f1; font-weight: 600; }
+  .verdict-substituir { color: #ef4444; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h1>Reorganização de Skills — Plano de Ação</h1>
+<p class="subtitle">Baseado na análise de 27 repositórios + avaliação das skills atuais · 2026-06-08</p>
+
+<div class="legend">
+  <div class="legend-item"><div class="dot dot-fusao"></div> Fusão (duas skills viram uma nova)</div>
+  <div class="legend-item"><div class="dot dot-absorver"></div> Absorção (conteúdo de repo entra na skill existente)</div>
+  <div class="legend-item"><div class="dot dot-nova"></div> Nova (não existe ainda — criar do zero)</div>
+  <div class="legend-item"><div class="dot dot-manter"></div> Manter + Upgrade (skill atual boa, enriquecer)</div>
+  <div class="legend-item"><div class="dot dot-descartar"></div> Descartar (substituída ou sem utilidade)</div>
+  <div class="legend-item"><div class="dot dot-claude-code"></div> Requer Claude Code (não roda em claude.ai)</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section-title">🔴 Avaliação das suas Skills Atuais</div>
+<table class="qa-table">
+  <thead>
+    <tr>
+      <th>Skill Atual</th>
+      <th>Qualidade Real</th>
+      <th>O que falta / problema</th>
+      <th>Veredicto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="skill-name">criar-landing-page</span><br><span class="skill-from">skill sua (sem repo público)</span></td>
+      <td><span class="quality-med">Boa estrutura, fraca visualmente</span></td>
+      <td>Sem sistema de design — fonte sempre Inter/Poppins, sem paleta, sem guia de estilo. Gera HTML funcional mas esteticamente genérico. Não usa padrões validados de LP.</td>
+      <td><span class="verdict-upgrade">UPGRADE COMPLETO</span></td>
+    </tr>
+    <tr>
+      <td><span class="skill-name">copy-anuncio</span><br><span class="skill-from">skill sua (sem repo público)</span></td>
+      <td><span class="quality-high">Muito boa — acima da média do mercado</span></td>
+      <td>Falta: loop de iteração por dados de performance (só gera do zero, não otimiza baseado em CTR/ROAS). Falta specs de caracteres por plataforma.</td>
+      <td><span class="verdict-upgrade">MANTER + absorver iteração de dados</span></td>
+    </tr>
+    <tr>
+      <td><span class="skill-name">analise-campanha</span><br><span class="skill-from">skill sua (sem repo público)</span></td>
+      <td><span class="quality-high">Muito boa — gates estatísticos corretos</span></td>
+      <td>Funcionalmente completa. Pode absorver integração com Meta Ads MCP oficial quando ele for conectado.</td>
+      <td><span class="verdict-manter">MANTER + update Meta MCP</span></td>
+    </tr>
+    <tr>
+      <td><span class="skill-name">analise-criativo</span><br><span class="skill-from">skill sua (sem repo público)</span></td>
+      <td><span class="quality-high">Boa — framework cirúrgico presente</span></td>
+      <td>Sem referência cruzada com benchmarks de hook rate por setor. Sem protocolo de comparação A/B formal.</td>
+      <td><span class="verdict-manter">MANTER + absorver ab-testing</span></td>
+    </tr>
+    <tr>
+      <td><span class="skill-name">roteiro-criativo-ia</span><br><span class="skill-from">skill sua (sem repo público)</span></td>
+      <td><span class="quality-high">Boa — dois conceitos + 3 hooks cada</span></td>
+      <td>Funcionalmente sólida. Possível fusão com google-mcp-orchestrator a longo prazo (são sequenciais).</td>
+      <td><span class="verdict-manter">MANTER por agora</span></td>
+    </tr>
+    <tr>
+      <td><span class="skill-name">validacao-produto</span><br><span class="skill-from">skill sua (sem repo público)</span></td>
+      <td><span class="quality-high">Boa — scoring matrix presente</span></td>
+      <td>Pode absorver customer-research para validação mais profunda baseada em voz do cliente.</td>
+      <td><span class="verdict-manter">MANTER + absorver customer-research</span></td>
+    </tr>
+    <tr>
+      <td><span class="skill-name">relatorio-operacional</span><br><span class="skill-from">skill sua (sem repo público)</span></td>
+      <td><span class="quality-med">Boa estrutura, dados ainda mock</span></td>
+      <td>O pipeline Stripe→Wix→Notion→manual ainda não tem dados reais (pré-revenue). Funcionará bem quando houver dados.</td>
+      <td><span class="verdict-manter">MANTER — aguardar dados reais</span></td>
+    </tr>
+    <tr>
+      <td><span class="skill-name">manus-orchestrator</span><br><span class="skill-from">skill sua (sem repo público)</span></td>
+      <td><span class="quality-high">Excelente — protocolo cirúrgico detalhado</span></td>
+      <td>A mais completa de todas. Pode absorver padrões de context engineering para sessões longas.</td>
+      <td><span class="verdict-manter">MANTER — não mexer por agora</span></td>
+    </tr>
+    <tr>
+      <td><span class="skill-name">google-mcp-orchestrator</span><br><span class="skill-from">skill sua (sem repo público)</span></td>
+      <td><span class="quality-high">Excelente — pipeline Caso A/B/C definido</span></td>
+      <td>A mais técnica e específica. Manter intacta.</td>
+      <td><span class="verdict-manter">MANTER — não mexer</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section-title">🟣 Fusões — duas ou mais skills viram uma nova skill mais poderosa</div>
+<table>
+  <thead>
+    <tr>
+      <th style="width:14%">Skill Final</th>
+      <th style="width:20%">O que entra</th>
+      <th style="width:32%">Por que juntar (sem perda de qualidade)</th>
+      <th style="width:18%">Tipo</th>
+      <th style="width:10%">Prioridade</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr class="row-fusao">
+      <td>
+        <span class="skill-name">web-builder</span>
+        <div class="skill-from">nome sugerido</div>
+      </td>
+      <td>
+        <span class="pill">criar-landing-page</span> (atual — sem repo)<br>
+        <a href="https://github.com/anthropics/skills/tree/main/skills/frontend-design" target="_blank" class="pill-link">frontend-design</a> (Anthropic)<br>
+        <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill" target="_blank" class="pill-link">ui-ux-pro-max</a> (nextlevelbuilder)
+      </td>
+      <td>
+        <strong>Por que juntar:</strong> As três têm o mesmo acionador ("cria algo visual em HTML") mas cada uma traz uma camada diferente:<br><br>
+        • <em>criar-landing-page</em> = estrutura de conversão (o QUÊ gerar)<br>
+        • <em>frontend-design</em> = filosofia anti-genérica (COMO pensar o design)<br>
+        • <em>ui-ux-pro-max</em> = banco de dados validado (COM QUÊ: 161 paletas, 24 padrões LP, 67 estilos, 99 regras UX)<br><br>
+        Juntas formam: "gero uma LP com estrutura de conversão + visual distintivo + sistema de design correto para o tipo de produto." Separadas, qualquer uma das três pode ativar quando você quer as outras três também.
+        <br><br>
+        <strong>Sem perda porque:</strong> ui-ux-pro-max e frontend-design têm escopos não sobrepostos — uma é filosófica, outra é um banco de dados. Criar-landing-page é a âncora de conversão. As três se somam, nunca se repetem.
+        <br><br>
+        <strong>Nome mais amplo justificado:</strong> "web-builder" porque a skill poderá gerar LPs, pages de produto, páginas de captura, páginas de checkout — não só "landing page". O trigger se expande junto.
+      </td>
+      <td><span class="tag tag-fusao">Fusão 3→1</span></td>
+      <td><span class="priority-imediato">IMEDIATO</span></td>
+    </tr>
+
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section-title">🔵 Absorções — conteúdo de repositório entra dentro da skill atual existente</div>
+<table>
+  <thead>
+    <tr>
+      <th style="width:14%">Skill que recebe</th>
+      <th style="width:18%">O que absorve</th>
+      <th style="width:38%">O que especificamente entra + por quê</th>
+      <th style="width:10%">Tipo</th>
+      <th style="width:10%">Prioridade</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr class="row-absorver">
+      <td><span class="skill-name">copy-anuncio</span><div class="skill-from">nome mantido — sem repo público</div></td>
+      <td><a href="https://github.com/coreyhaines31/marketingskills/tree/main/skills/ad-creative" target="_blank" class="pill-link">marketingskills/ad-creative</a></td>
+      <td>
+        Absorver <strong>apenas o loop de iteração por performance</strong>:<br>
+        Puxar dados de CTR/ROAS → identificar padrões dos vencedores → gerar variações que replicam o que funciona + testam novos ângulos.<br><br>
+        A copy-anuncio atual só gera do zero. Com esse loop, ela também otimiza campanhas que já estão rodando — que é exatamente o que você vai precisar na fase de escala.<br><br>
+        Não absorver: plataformas não relevantes (LinkedIn), specs de display Google (não usa).
+      </td>
+      <td><span class="tag tag-absorver">Absorção</span></td>
+      <td><span class="priority-curto">CURTO PRAZO</span></td>
+    </tr>
+
+    <tr class="row-absorver">
+      <td><span class="skill-name">analise-criativo</span><div class="skill-from">nome mantido — sem repo público</div></td>
+      <td><a href="https://github.com/coreyhaines31/marketingskills/tree/main/skills/ab-testing" target="_blank" class="pill-link">marketingskills/ab-testing</a></td>
+      <td>
+        Absorver o <strong>framework de hipótese + validade estatística</strong>:<br>
+        "Because [observação], we believe [mudança] will cause [resultado]. We'll know when [métrica]."<br><br>
+        analise-criativo hoje diagnostica o problema mas não estrutura o teste que vem depois. Com ab-testing absorvido, ela fecha o ciclo: diagnóstico → hipótese → teste estruturado → resultado mínimo necessário.
+      </td>
+      <td><span class="tag tag-absorver">Absorção</span></td>
+      <td><span class="priority-curto">CURTO PRAZO</span></td>
+    </tr>
+
+    <tr class="row-absorver">
+      <td><span class="skill-name">validacao-produto</span><div class="skill-from">nome mantido — sem repo público</div></td>
+      <td><a href="https://github.com/coreyhaines31/marketingskills/tree/main/skills/customer-research" target="_blank" class="pill-link">marketingskills/customer-research</a></td>
+      <td>
+        Absorver o <strong>framework de voz do cliente</strong>:<br>
+        Jobs-to-be-done, perguntas de entrevista, padrões de linguagem que viram copy.<br><br>
+        validacao-produto hoje avalia o produto com métricas (margem, impulso, competição). Com customer-research, ela também avalia: "qual a linguagem exata que o público usa para descrever o problema?" — que alimenta diretamente copy-anuncio e web-builder.
+      </td>
+      <td><span class="tag tag-absorver">Absorção</span></td>
+      <td><span class="priority-curto">CURTO PRAZO</span></td>
+    </tr>
+
+    <tr class="row-absorver">
+      <td><span class="skill-name">analise-campanha</span><div class="skill-from">nome mantido — sem repo público</div></td>
+      <td>Meta Ads MCP oficial<br><a href="https://mcp.facebook.com/ads" target="_blank" class="pill-link">mcp.facebook.com/ads</a></td>
+      <td>
+        Não é um repo — é o MCP oficial da Meta (29 tools, lançado 2026-04-29).<br><br>
+        Absorver na analise-campanha: protocolo de <strong>diagnóstico de pixel/CAPI via MCP</strong> (event match quality, deduplication gaps) + templates de query para os 29 tools mais usados em COD (top ad sets por ROAS, frequency drift, CPM trend).<br><br>
+        Isso transforma analise-campanha de "skill que analisa dados que você cola" para "skill que puxa os dados diretamente e analisa".
+      </td>
+      <td><span class="tag tag-absorver">Absorção</span></td>
+      <td><span class="priority-imediato">IMEDIATO</span></td>
+    </tr>
+
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section-title">🟢 Skills Novas — instalar do repositório (com adaptações para seu caso)</div>
+<table>
+  <thead>
+    <tr>
+      <th style="width:14%">Nome Final</th>
+      <th style="width:16%">Fonte</th>
+      <th style="width:38%">O que faz + por que você precisa</th>
+      <th style="width:12%">Adaptações necessárias</th>
+      <th style="width:10%">Prioridade</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr class="row-nova">
+      <td><span class="skill-name">cro</span></td>
+      <td><a href="https://github.com/coreyhaines31/marketingskills/tree/main/skills/cro" target="_blank" class="pill-link">marketingskills/cro</a></td>
+      <td>
+        Diagnóstico de páginas existentes que não convertem. Analisa: clareza da proposta de valor, headline, CTA, fricção, prova social.<br><br>
+        <strong>Por que você precisa:</strong> web-builder <em>gera</em> LPs. cro <em>diagnostica</em> LPs depois que rodaram. São sequenciais no pipeline: gerar → lançar → analisar → cro → rebuild. Sem cro, você só sabe "a página não converteu" sem saber por quê.
+      </td>
+      <td>Adicionar contexto COD BR: "PAGAMENTO NA ENTREGA acima da dobra?", WhatsApp CTA, velocidade mobile (3G).</td>
+      <td><span class="priority-imediato">IMEDIATO</span></td>
+    </tr>
+
+    <tr class="row-nova">
+      <td><span class="skill-name">product-context</span></td>
+      <td><a href="https://github.com/coreyhaines31/marketingskills/tree/main/skills/product-marketing" target="_blank" class="pill-link">marketingskills/product-marketing</a></td>
+      <td>
+        Arquivo de contexto central: posicionamento do produto, ICP, diferenciadores, objeções principais, linguagem do cliente. Todas as outras skills leem este arquivo antes de agir.<br><br>
+        <strong>Por que você precisa:</strong> Hoje cada skill pergunta as mesmas coisas (produto, público, dor). Com product-context, você define UMA vez e todas as skills consultam. Reduz fricção em todas as interações.
+      </td>
+      <td>Template específico para COD dropshipping BR: campos de margem, plataforma Logzz/Kairos, benchmarks de CPA-alvo.</td>
+      <td><span class="priority-imediato">IMEDIATO</span></td>
+    </tr>
+
+    <tr class="row-nova">
+      <td><span class="skill-name">humanizer</span></td>
+      <td><a href="https://github.com/blader/humanizer" target="_blank" class="pill-link">blader/humanizer v2.8.0</a></td>
+      <td>
+        Remove padrões de texto AI: em dash em excesso, "portanto", "nesse sentido", "é fundamental", regra de três, voz passiva, vocabulário AI (utilize, leverage, transformar).<br><br>
+        <strong>Por que você precisa:</strong> Todo copy gerado por IA para BR COD tem que soar WhatsApp-natural. Qualquer hint de texto de IA mata conversão no mercado popular brasileiro. Esta skill é a camada de pós-processamento final de qualquer copy.
+      </td>
+      <td>Adicionar dicionário de IA-isms em PT-BR. Adicionar perfil de voz COD: direto, urgente, coloquial.</td>
+      <td><span class="priority-imediato">IMEDIATO</span></td>
+    </tr>
+
+    <tr class="row-nova">
+      <td><span class="skill-name">pricing</span></td>
+      <td><a href="https://github.com/coreyhaines31/marketingskills/tree/main/skills/pricing" target="_blank" class="pill-link">marketingskills/pricing</a></td>
+      <td>
+        Estratégia de precificação: âncora de preço, percepção de valor, psicologia de preço, structure de oferta.<br><br>
+        <strong>Por que você precisa:</strong> COD dropshipping no BR tem uma equação de preço muito específica: custo produto + frete Logzz + CPA Meta Ads alvo + taxa de devolução + margem. Essa skill estrutura essa conta e as decisões de como apresentar o preço na LP.
+      </td>
+      <td>Adicionar calculadora COD: custo + Logzz fee + CPA alvo + devolução → preço mínimo. Adicionar âncoras de preço típicas do mercado BR.</td>
+      <td><span class="priority-curto">CURTO PRAZO</span></td>
+    </tr>
+
+    <tr class="row-nova">
+      <td><span class="skill-name">session-memory</span></td>
+      <td><a href="https://github.com/daianepepes-lab/claude-skills/tree/main/know-me" target="_blank" class="pill-link">daianepepes-lab/know-me</a></td>
+      <td>
+        Memória persistente em arquivos para Claude Code. Lê preferências, decisões e contexto no início de cada sessão. Diferente da memória do claude.ai — esta funciona dentro do Claude Code CLI.<br><br>
+        <strong>Por que você precisa:</strong> No Claude Code, cada sessão começa do zero. session-memory faz Claude Code lembrar: seu stack (Node.js ESM), suas skills instaladas, suas decisões de produto, suas regras de negócio — sem re-explicar toda sessão.
+      </td>
+      <td>Template de memória específico para dropshipping: produto atual, CPA alvo, regras de pricing, skills instaladas, decisões arquiteturais do VPS.</td>
+      <td><span class="priority-curto">CURTO PRAZO</span></td>
+    </tr>
+
+    <tr class="row-nova">
+      <td><span class="skill-name">quick-researcher</span></td>
+      <td><a href="https://github.com/daianepepes-lab/claude-skills/tree/main/researcher" target="_blank" class="pill-link">daianepepes-lab/researcher</a></td>
+      <td>
+        Pesquisa rápida multi-fonte com output estruturado (Summary / Findings / Sources). Para tasks que não justificam Manus (5-15 min, sem browser autônomo).<br><br>
+        <strong>Por que você precisa:</strong> Complementa manus-orchestrator. Manus = pesquisa profunda, custa crédito, demora. quick-researcher = verificar preço de concorrente, checar política Meta, confirmar dado rápido. Gratuito, imediato.
+      </td>
+      <td>Adicionar exemplos de trigger COD: "qual o preço do produto X no Mercado Livre?", "Meta proibiu anúncios de saúde com [termo]?"</td>
+      <td><span class="priority-curto">CURTO PRAZO</span></td>
+    </tr>
+
+    <tr class="row-nova">
+      <td><span class="skill-name">customer-support</span></td>
+      <td><a href="https://github.com/daianepepes-lab/claude-skills/tree/main/customer-support" target="_blank" class="pill-link">daianepepes-lab/customer-support</a></td>
+      <td>
+        Workflows de atendimento ao cliente: reconhecer → entender → categorizar → resolver → follow-up. Templates para cenários comuns, escalação.<br><br>
+        <strong>Por que você precisa:</strong> Instalar ANTES do primeiro pedido, não depois. COD tem padrões específicos de suporte: "meu pedido não chegou", "quero devolver", "o produto é diferente". Precisa estar pronto.
+      </td>
+      <td>Remover seções enterprise. Adicionar WhatsApp como canal primário. Adicionar fluxo de disputa de entrega Logzz/Correios.</td>
+      <td><span class="priority-curto">CURTO PRAZO</span></td>
+    </tr>
+
+    <tr class="row-nova">
+      <td><span class="skill-name">meta-ads-mcp</span></td>
+      <td>⭐ Criar do zero<br><a href="https://mcp.facebook.com/ads" target="_blank" class="pill-link">mcp.facebook.com/ads</a><br><small style="color:#64748b">(MCP oficial Meta — 29 tools, lançado 2026-04-29)</small></td>
+      <td>
+        Skill que governa como usar os 29 tools do MCP oficial da Meta. Templates de query para COD: top ad sets por ROAS, frequency drift, CPM trend. Protocolo de diagnóstico pixel/CAPI. Criação de campanhas em estado pausado para revisão humana.<br><br>
+        <strong>Por que você precisa:</strong> O MCP existe, mas sem uma skill que governa seu uso, você vai reinventar as queries toda vez. Esta skill é o "como usar o Meta MCP para COD dropshipping" — com os templates certos já prontos.
+      </td>
+      <td>Não tem fonte — escrever do zero baseado nos 29 tools documentados + melhores práticas de uso para COD.</td>
+      <td><span class="priority-imediato">IMEDIATO</span></td>
+    </tr>
+
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section-title">🟡 Manter — skills boas que ficam como estão ou com update mínimo</div>
+<table>
+  <thead>
+    <tr>
+      <th>Skill</th>
+      <th>Status</th>
+      <th>Ação</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="row-manter">
+      <td><span class="skill-name">manus-orchestrator</span><br><a href="https://manus.im" target="_blank" class="repo-link">manus.im</a></td>
+      <td>A mais completa de todas. Protocolo, templates, Watch Protocol, Drive integration — produção.</td>
+      <td><span class="tag tag-manter">Não tocar por agora</span></td>
+    </tr>
+    <tr class="row-manter">
+      <td><span class="skill-name">google-mcp-orchestrator</span><br><a href="https://google-mcp-conection.duckdns.org" target="_blank" class="repo-link">google-mcp-conection.duckdns.org</a></td>
+      <td>Excelente. Pipeline Caso A/B/C, loop de aprovação, Drive output — produção.</td>
+      <td><span class="tag tag-manter">Não tocar por agora</span></td>
+    </tr>
+    <tr class="row-manter">
+      <td><span class="skill-name">relatorio-operacional</span><br><span class="skill-from">skill sua (sem repo público)</span></td>
+      <td>Boa estrutura, aguardando dados reais (pré-revenue). Funcionará bem quando tiver Stripe/Wix ativo.</td>
+      <td><span class="tag tag-manter">Não tocar — aguardar primeira venda</span></td>
+    </tr>
+    <tr class="row-manter">
+      <td><span class="skill-name">roteiro-criativo-ia</span><br><span class="skill-from">skill sua (sem repo público)</span></td>
+      <td>Sólida. Dois conceitos + 3 hooks + briefs de produção. Pode ser fundida com google-mcp-orchestrator no futuro.</td>
+      <td><span class="tag tag-manter">Manter por agora — revisitar na escala</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section-title">🔴 Descartar — sem utilidade real para sua pipeline atual ou futuro próximo</div>
+<table>
+  <thead>
+    <tr>
+      <th>Repositório</th>
+      <th>Motivo do descarte</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="row-descartar">
+      <td><span class="skill-name">create-skill (daianepepes-lab)</span><br><a href="https://github.com/daianepepes-lab/claude-skills/tree/main/create-skill" target="_blank" class="repo-link">github.com/daianepepes-lab/claude-skills/create-skill</a></td>
+      <td>Você já tem <span class="pill">skill-creator</span> (Anthropic oficial) que é superior em tudo. Instalar os dois causa conflito de trigger.</td>
+    </tr>
+    <tr class="row-descartar">
+      <td><span class="skill-name">scalability (daianepepes-lab)</span><br><a href="https://github.com/daianepepes-lab/claude-skills/tree/main/scalability" target="_blank" class="repo-link">github.com/daianepepes-lab/claude-skills/scalability</a></td>
+      <td>Arquitetura para alto tráfego (SaaS, APIs com milhões de requests). Irrelevante na escala atual de dropshipping.</td>
+    </tr>
+    <tr class="row-descartar">
+      <td><span class="skill-name">trigger-dev (daianepepes-lab)</span><br><a href="https://github.com/daianepepes-lab/claude-skills/tree/main/trigger-dev" target="_blank" class="repo-link">github.com/daianepepes-lab/claude-skills/trigger-dev</a></td>
+      <td>Plataforma SaaS de jobs assíncronos. Você já tem GitHub Actions + PM2. Nova dependência sem problema a resolver.</td>
+    </tr>
+    <tr class="row-descartar">
+      <td><span class="skill-name">algorithmic-art (Anthropic)</span><br><a href="https://github.com/anthropics/skills/tree/main/skills/algorithmic-art" target="_blank" class="repo-link">github.com/anthropics/skills/algorithmic-art</a></td>
+      <td>Arte generativa com p5.js. Nenhuma aplicação em COD dropshipping.</td>
+    </tr>
+    <tr class="row-descartar">
+      <td><span class="skill-name">canvas-design (Anthropic)</span><br><a href="https://github.com/anthropics/skills/tree/main/skills/canvas-design" target="_blank" class="repo-link">github.com/anthropics/skills/canvas-design</a></td>
+      <td>Filosofia visual → PDF/PNG artístico. Pipeline é vídeo (Veo 3.1) + HTML. Não há uso.</td>
+    </tr>
+    <tr class="row-descartar">
+      <td><span class="skill-name">notebooklm-skill</span><br><a href="https://github.com/PleasePrompto/notebooklm-skill" target="_blank" class="repo-link">github.com/PleasePrompto/notebooklm-skill</a></td>
+      <td>Requer Chrome + Playwright em VPS headless (Xvfb necessário). Complexidade de infra muito alta para utilidade marginal.</td>
+    </tr>
+    <tr class="row-descartar">
+      <td><span class="skill-name">remotion</span><br><a href="https://github.com/remotion-dev/skills/tree/main/skills/remotion" target="_blank" class="repo-link">github.com/remotion-dev/skills/remotion</a></td>
+      <td>Vídeo programático via React. Você já tem Veo 3.1 + FFmpeg. Paradigmas completamente diferentes.</td>
+    </tr>
+    <tr class="row-descartar">
+      <td><span class="skill-name">superpowers — bootstrap completo</span><br><a href="https://github.com/obra/superpowers" target="_blank" class="repo-link">github.com/obra/superpowers</a></td>
+      <td>O bootstrap "usando-superpowers" força verificação de skill ANTES de qualquer resposta — conflita diretamente com manus-orchestrator e google-mcp-orchestrator que precisam de execução imediata.</td>
+    </tr>
+    <tr class="row-descartar">
+      <td><span class="skill-name">obsidian-skills</span><br><a href="https://github.com/kepano/obsidian-skills" target="_blank" class="repo-link">github.com/kepano/obsidian-skills</a></td>
+      <td>Você não usa Obsidian.</td>
+    </tr>
+    <tr class="row-descartar">
+      <td><span class="skill-name">Louishin/claude-api-cost-optimization</span><br><a href="https://github.com/Louishin/claude-api-cost-optimization" target="_blank" class="repo-link">github.com/Louishin/claude-api-cost-optimization</a></td>
+      <td>⚠️ RISCO DE SEGURANÇA — link de download idêntico para Win/Mac, sem código-fonte, binário externo. Possível malware.</td>
+    </tr>
+    <tr class="row-descartar">
+      <td><span class="skill-name">excel-mcp-server</span><br><a href="https://github.com/negokaz/excel-mcp-server" target="_blank" class="repo-link">github.com/negokaz/excel-mcp-server</a></td>
+      <td>Features principais são Windows-only. VPS é Ubuntu Linux. Sem uso ativo de Excel no pipeline.</td>
+    </tr>
+    <tr class="row-descartar">
+      <td><span class="skill-name">marketingskills/competitors</span><br><a href="https://github.com/coreyhaines31/marketingskills/tree/main/skills/competitors" target="_blank" class="repo-link">github.com/coreyhaines31/marketingskills/competitors</a></td>
+      <td>Cria páginas de comparação com concorrentes para SEO. Você é COD — tráfego pago, não orgânico. Irrelevante agora.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section-title">🟣 Requer Claude Code — instalar/usar apenas no ambiente CLI</div>
+<table>
+  <thead>
+    <tr>
+      <th>Skill/Tool</th>
+      <th>Por que só no Claude Code</th>
+      <th>O que faz</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="row-claude-code">
+      <td><span class="skill-name">session-memory</span><br><a href="https://github.com/daianepepes-lab/claude-skills/tree/main/know-me" target="_blank" class="repo-link">github.com/daianepepes-lab/know-me</a></td>
+      <td>Lê/escreve arquivos no sistema. Requer filesystem do Claude Code — não existe no claude.ai.</td>
+      <td>Persistência de contexto entre sessões CLI.</td>
+    </tr>
+    <tr class="row-claude-code">
+      <td><span class="skill-name">web-artifacts-builder</span> (futuro)<br><a href="https://github.com/anthropics/skills/tree/main/skills/web-artifacts-builder" target="_blank" class="repo-link">github.com/anthropics/skills/web-artifacts-builder</a></td>
+      <td>Roda scripts bash (init-artifact.sh, bundle-artifact.sh), instala dependências npm. Requer terminal.</td>
+      <td>React+Tailwind+shadcn → HTML único para LPs complexas.</td>
+    </tr>
+    <tr class="row-claude-code">
+      <td><span class="skill-name">mcp-health</span> (futuro)<br><span class="skill-from">criar do zero — sem repo</span></td>
+      <td>Monitora processos PM2, lê logs, reinicia servidores. Requer acesso ao VPS via terminal.</td>
+      <td>Diagnóstico e recuperação dos servidores MCP.</td>
+    </tr>
+    <tr class="row-claude-code">
+      <td><span class="skill-name">gsd-core / dev-framework</span> (futuro)<br><a href="https://github.com/open-gsd/gsd-core" target="_blank" class="repo-link">github.com/open-gsd/gsd-core</a></td>
+      <td>Framework instalado via npm com slash commands. Requer Claude Code CLI.</td>
+      <td>Ciclo discuss→plan→execute→verify→ship para dev.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section-title">⚡ Gaps Críticos — Skills que NÃO existem em nenhum repositório e precisam ser criadas</div>
+<table>
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>O que resolve</th>
+      <th>Prioridade</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="row-nova">
+      <td><span class="skill-name">deploy-lp</span></td>
+      <td>Pegar HTML gerado pelo web-builder e colocar no ar no VPS. Config Nginx, DNS, SSL, URL de teste vs produção. Hoje é manual e arriscado.</td>
+      <td><span class="priority-imediato">IMEDIATO — bloqueia o pipeline</span></td>
+    </tr>
+    <tr class="row-nova">
+      <td><span class="skill-name">pixel-tracking</span></td>
+      <td>Implementar Meta Pixel + CAPI + UTM corretamente. Verificar event match quality. Sem isso, Meta Ads aprende errado e escala não funciona.</td>
+      <td><span class="priority-imediato">IMEDIATO — bloqueia Meta Ads</span></td>
+    </tr>
+    <tr class="row-nova">
+      <td><span class="skill-name">cod-pricing</span></td>
+      <td>Calculadora: custo produto + frete Logzz + CPA alvo + taxa de devolução + margem → preço de venda mínimo. Decisão crítica antes de lançar.</td>
+      <td><span class="priority-curto">CURTO PRAZO</span></td>
+    </tr>
+    <tr class="row-nova">
+      <td><span class="skill-name">escala-campanha</span></td>
+      <td>Quando e como escalar: aumento de budget, lookalike expansion, triggers de rotação de criativo. Hoje é julgamento manual sem framework.</td>
+      <td><span class="priority-curto">CURTO PRAZO</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section-title">📊 Resumo do Estado Final — Pipeline Completa</div>
+<table>
+  <thead>
+    <tr>
+      <th>Fase do Pipeline</th>
+      <th>Skill Responsável</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>1. Pesquisa profunda de produto/mercado</td><td><span class="pill">manus-orchestrator</span></td><td>✅ Pronta</td></tr>
+    <tr><td>2. Contexto de produto centralizado</td><td><span class="pill-new pill">product-context</span> (nova)</td><td>🔴 Criar agora</td></tr>
+    <tr><td>3. Validação GO/REJECT</td><td><span class="pill">validacao-produto</span> + absorver customer-research</td><td>🟡 Upgrade leve</td></tr>
+    <tr><td>4. Precificação COD</td><td><span class="pill-new pill">cod-pricing</span> (nova — gap)</td><td>🔴 Criar</td></tr>
+    <tr><td>5. Construção da LP</td><td><span class="pill-new pill">web-builder</span> (fusão 3→1)</td><td>🔴 Criar agora</td></tr>
+    <tr><td>6. Diagnóstico LP existente</td><td><span class="pill-new pill">cro</span> (nova)</td><td>🔴 Criar agora</td></tr>
+    <tr><td>7. Deploy da LP no VPS</td><td><span class="pill-new pill">deploy-lp</span> (gap crítico)</td><td>🔴 Criar</td></tr>
+    <tr><td>8. Tracking/Pixel verificado</td><td><span class="pill-new pill">pixel-tracking</span> (gap crítico)</td><td>🔴 Criar</td></tr>
+    <tr><td>9. Roteiro criativo + prompts Veo</td><td><span class="pill">roteiro-criativo-ia</span></td><td>✅ Pronta</td></tr>
+    <tr><td>10. Produção de vídeo AI</td><td><span class="pill">google-mcp-orchestrator</span></td><td>✅ Pronta</td></tr>
+    <tr><td>11. Copy de anúncio</td><td><span class="pill">copy-anuncio</span> + absorver iteração</td><td>🟡 Upgrade</td></tr>
+    <tr><td>12. Copy humanizada</td><td><span class="pill-new pill">humanizer</span> (nova)</td><td>🔴 Criar agora</td></tr>
+    <tr><td>13. Meta Ads — gestão via MCP</td><td><span class="pill-new pill">meta-ads-mcp</span> (nova)</td><td>🔴 Criar agora</td></tr>
+    <tr><td>14. Análise de campanha</td><td><span class="pill">analise-campanha</span> + Meta MCP</td><td>🟡 Upgrade</td></tr>
+    <tr><td>15. Análise de criativo</td><td><span class="pill">analise-criativo</span> + ab-testing</td><td>🟡 Upgrade leve</td></tr>
+    <tr><td>16. Escala de campanha</td><td><span class="pill-new pill">escala-campanha</span> (gap)</td><td>🔴 Criar</td></tr>
+    <tr><td>17. Relatório operacional</td><td><span class="pill">relatorio-operacional</span></td><td>✅ Aguarda dados</td></tr>
+    <tr><td>18. Atendimento ao cliente</td><td><span class="pill-new pill">customer-support</span> (nova)</td><td>🔴 Criar antes da primeira venda</td></tr>
+    <tr><td>19. Pesquisa rápida in-context</td><td><span class="pill-new pill">quick-researcher</span> (nova)</td><td>🔴 Criar</td></tr>
+    <tr><td>20. Memória de sessão (Claude Code)</td><td><span class="pill-new pill">session-memory</span> (Claude Code)</td><td>🔴 Criar</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  <strong>Próximo passo sugerido:</strong> Confirme esta organização ou peça ajustes. Depois, cada skill marcada como 🔴 vira um chat separado de implementação. 
+  A ordem recomendada: <strong>(1) web-builder</strong> primeiro — é a maior fusão e a mais crítica. 
+  <strong>(2) product-context</strong> — alimenta todas as outras. 
+  <strong>(3) meta-ads-mcp</strong> — você pode conectar o MCP hoje mesmo em 90 segundos. 
+  <strong>(4) humanizer, cro, deploy-lp, pixel-tracking</strong> — em paralelo ou sequencial.<br><br>
+  <strong>Nota sobre qualidade:</strong> A fusão das três skills em web-builder (criar-landing-page + frontend-design + ui-ux-pro-max) não perde qualidade de nenhuma delas desde que o prompt de skill-creator seja preciso. A chave é: cada skill contribui com sua camada (conversão + filosofia + banco de dados) e as três são chamadas na sequência correta dentro da skill unificada.
+</div>
+
+</body>
+</html>
